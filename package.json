@@ -1,0 +1,17 @@
+{
+  "name": "voting-app",
+  "version": "1.0.0",
+  "description": "Aplicación de votación con Node.js, Express y EJS",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
