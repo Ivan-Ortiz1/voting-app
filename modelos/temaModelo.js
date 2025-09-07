@@ -11,9 +11,11 @@ function obtenerTemas() {
 }
 
 function agregarTema(titulo) {
+  if (!titulo || titulo.trim() === "") return null;
+
   const nuevoTema = {
-    id: temas.length + 1,
-    titulo,
+    id: temas.length > 0 ? temas[temas.length - 1].id + 1 : 1,
+    titulo: titulo.trim(),
     votos: 0
   };
   temas.push(nuevoTema);
@@ -26,11 +28,41 @@ function obtenerTemaPorId(id) {
 
 function actualizarTema(id, nuevoTitulo) {
   const tema = obtenerTemaPorId(id);
-  if (tema && nuevoTitulo.trim() !== "") {
+  if (tema && nuevoTitulo && nuevoTitulo.trim() !== "") {
     tema.titulo = nuevoTitulo.trim();
     return tema;
   }
   return null;
 }
 
-module.exports = { obtenerTemas, agregarTema, obtenerTemaPorId, actualizarTema };
+function eliminarTema(id) {
+  const indice = temas.findIndex(t => t.id === id);
+  if (indice !== -1) {
+    temas.splice(indice, 1);
+    return true;
+  }
+  return false;
+}
+
+function votarTema(id) {
+  const tema = obtenerTemaPorId(id);
+  if (tema) {
+    tema.votos++;
+    return tema;
+  }
+  return null;
+}
+
+function obtenerTemasOrdenados() {
+  return [...temas].sort((a, b) => b.votos - a.votos);
+}
+
+module.exports = { 
+  obtenerTemas, 
+  agregarTema, 
+  obtenerTemaPorId, 
+  actualizarTema, 
+  eliminarTema, 
+  votarTema, 
+  obtenerTemasOrdenados 
+};
