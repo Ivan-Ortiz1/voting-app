@@ -8,11 +8,52 @@
 <body>
   <h1>Editar Tema</h1>
 
+  <!-- Mensaje de error si existe -->
+  <% if (typeof error !== "undefined") { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <!-- Formulario para editar el título del tema -->
   <form action="/temas/editar/<%= tema.id %>" method="POST">
     <input type="text" name="titulo" value="<%= tema.titulo %>" required>
     <button type="submit">Guardar cambios</button>
   </form>
 
+  <h2>Enlaces</h2>
+
+  <!-- Formulario para agregar enlaces -->
+  <form action="/temas/editar/<%= tema.id %>/enlaces/agregar" method="POST">
+    <input type="text" name="nombre" placeholder="Ej: Documentación oficial de Express" required>
+    <input type="url" name="url" placeholder="https://..." required>
+    <button type="submit">Agregar Enlace</button>
+  </form>
+
+  <!-- Lista de enlaces existentes -->
+  <ul id="lista-enlaces">
+    <% tema.enlaces.forEach(e => { %>
+      <li id="enlace-<%= e.id %>" class="enlace-item">
+        <a href="<%= e.url %>" target="_blank"><%= e.nombre %></a> — 
+        <span class="contador-votos"><%= e.votos %></span> votos
+
+        <!-- Botón para eliminar enlace -->
+        <form action="/temas/editar/<%= tema.id %>/enlaces/<%= e.id %>/eliminar" method="POST" style="display:inline;">
+          <button>Eliminar</button>
+        </form>
+
+        <!-- Botón para votar enlace en tiempo real -->
+        <button 
+          class="btn-votar-enlace" 
+          data-id="<%= e.id %>" 
+          data-tema="<%= tema.id %>">
+          Votar
+        </button>
+      </li>
+    <% }) %>
+  </ul>
+
   <p><a href="/temas">Volver a la lista</a></p>
+
+  <!-- Script para votación AJAX en enlaces -->
+  <script src="/js/votacionEnlaces.js"></script>
 </body>
 </html>

@@ -1,7 +1,65 @@
+/* Estilos base */
 body {
   font-family: Arial, sans-serif;
   background: #f5f5f5;
   color: #333;
   text-align: center;
   margin-top: 50px;
+  line-height: 1.6;
+}
+
+/* Listas */
+ul {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+li {
+  background: #fff;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Botones */
+button,
+input[type="submit"] {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover,
+input[type="submit"]:hover {
+  background: #0056b3;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="url"] {
+  padding: 6px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Efecto de highlight al votar */
+.highlight {
+  background: #d4edda !important;
+  transition: background 0.5s ease;
+}
+
+/* Mensajes de error */
+p[style*="color:red"] {
+  font-weight: bold;
 }

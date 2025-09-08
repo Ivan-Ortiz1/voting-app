@@ -1,9 +1,9 @@
 // modelos/temaModelo.js
 
 let temas = [
-  { id: 1, titulo: "JavaScript Básico", votos: 3 },
-  { id: 2, titulo: "Node.js y Express", votos: 5 },
-  { id: 3, titulo: "Bases de Datos", votos: 2 }
+  { id: 1, titulo: "JavaScript Básico", votos: 3, enlaces: [] },
+  { id: 2, titulo: "Node.js y Express", votos: 5, enlaces: [] },
+  { id: 3, titulo: "Bases de Datos", votos: 2, enlaces: [] }
 ];
 
 function obtenerTemas() {
@@ -16,7 +16,8 @@ function agregarTema(titulo) {
   const nuevoTema = {
     id: temas.length > 0 ? temas[temas.length - 1].id + 1 : 1,
     titulo: titulo.trim(),
-    votos: 0
+    votos: 0,
+    enlaces: [] // cada tema empieza con su lista de enlaces vacía
   };
   temas.push(nuevoTema);
   return nuevoTema;
@@ -57,6 +58,59 @@ function obtenerTemasOrdenados() {
   return [...temas].sort((a, b) => b.votos - a.votos);
 }
 
+// -------------------------
+// CRUD de Enlaces
+// -------------------------
+
+function agregarEnlace(temaId, url, nombre) {
+  const tema = obtenerTemaPorId(temaId);
+  if (!tema || !url || !nombre) return null;
+
+  const nuevoEnlace = {
+    id: tema.enlaces.length > 0 ? tema.enlaces[tema.enlaces.length - 1].id + 1 : 1,
+    nombre: nombre.trim(),
+    url: url.trim(),
+    votos: 0
+  };
+  tema.enlaces.push(nuevoEnlace);
+  return nuevoEnlace;
+}
+
+function obtenerEnlace(temaId, enlaceId) {
+  const tema = obtenerTemaPorId(temaId);
+  return tema ? tema.enlaces.find(e => e.id === enlaceId) : null;
+}
+
+function actualizarEnlace(temaId, enlaceId, nombre, url) {
+  const enlace = obtenerEnlace(temaId, enlaceId);
+  if (enlace && nombre && url) {
+    enlace.nombre = nombre.trim();
+    enlace.url = url.trim();
+    return enlace;
+  }
+  return null;
+}
+
+function eliminarEnlace(temaId, enlaceId) {
+  const tema = obtenerTemaPorId(temaId);
+  if (!tema) return false;
+  const index = tema.enlaces.findIndex(e => e.id === enlaceId);
+  if (index !== -1) {
+    tema.enlaces.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+
+function votarEnlace(temaId, enlaceId) {
+  const enlace = obtenerEnlace(temaId, enlaceId);
+  if (enlace) {
+    enlace.votos++;
+    return enlace;
+  }
+  return null;
+}
+
 module.exports = { 
   obtenerTemas, 
   agregarTema, 
@@ -64,5 +118,10 @@ module.exports = {
   actualizarTema, 
   eliminarTema, 
   votarTema, 
-  obtenerTemasOrdenados 
+  obtenerTemasOrdenados,
+  agregarEnlace,
+  obtenerEnlace,
+  actualizarEnlace,
+  eliminarEnlace,
+  votarEnlace
 };

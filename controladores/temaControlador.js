@@ -5,9 +5,17 @@ const {
   actualizarTema, 
   eliminarTema, 
   votarTema, 
-  obtenerTemasOrdenados 
+  obtenerTemasOrdenados,
+  agregarEnlace,
+  actualizarEnlace,
+  eliminarEnlace,
+  votarEnlace,
+  obtenerEnlace
 } = require("../modelos/temaModelo");
 
+// --------------------
+// Controladores de Temas
+// --------------------
 function listarTemas(req, res) {
   const temas = obtenerTemasOrdenados();
   res.render("temas", { temas });
@@ -70,6 +78,43 @@ function votarAjax(req, res) {
   }
 }
 
+// --------------------
+// Controladores de Enlaces
+// --------------------
+function crearEnlace(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const { nombre, url } = req.body;
+  agregarEnlace(temaId, url, nombre);
+  res.redirect(`/temas/editar/${temaId}`);
+}
+
+function editarEnlace(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const enlaceId = parseInt(req.params.enlaceId);
+  const { nombre, url } = req.body;
+  actualizarEnlace(temaId, enlaceId, nombre, url);
+  res.redirect(`/temas/editar/${temaId}`);
+}
+
+function borrarEnlace(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const enlaceId = parseInt(req.params.enlaceId);
+  eliminarEnlace(temaId, enlaceId);
+  res.redirect(`/temas/editar/${temaId}`);
+}
+
+function votarEnlaceAjax(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const enlaceId = parseInt(req.params.enlaceId);
+  const enlace = votarEnlace(temaId, enlaceId);
+
+  if (enlace) {
+    res.json({ success: true, enlace });
+  } else {
+    res.json({ success: false, message: "Enlace no encontrado" });
+  }
+}
+
 module.exports = { 
   listarTemas, 
   crearTema, 
@@ -77,5 +122,9 @@ module.exports = {
   editarTema, 
   borrarTema, 
   votar, 
-  votarAjax 
+  votarAjax,
+  crearEnlace,
+  editarEnlace,
+  borrarEnlace,
+  votarEnlaceAjax
 };
