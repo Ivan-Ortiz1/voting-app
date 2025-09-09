@@ -1,7 +1,7 @@
 // modelos/temaModelo.js
 
 let temas = [
-  { id: 1, titulo: "JavaScript Básico", votos: 3, enlaces: [] },
+  { id: 1, titulo: "JavaScript", votos: 3, enlaces: [] },
   { id: 2, titulo: "Node.js y Express", votos: 5, enlaces: [] },
   { id: 3, titulo: "Bases de Datos", votos: 2, enlaces: [] }
 ];
@@ -81,11 +81,14 @@ function obtenerEnlace(temaId, enlaceId) {
   return tema ? tema.enlaces.find(e => e.id === enlaceId) : null;
 }
 
-function actualizarEnlace(temaId, enlaceId, nombre, url) {
-  const enlace = obtenerEnlace(temaId, enlaceId);
-  if (enlace && nombre && url) {
-    enlace.nombre = nombre.trim();
-    enlace.url = url.trim();
+function actualizarEnlace(temaId, enlaceId, nuevoNombre, nuevaUrl) {
+  const tema = obtenerTemaPorId(temaId);
+  if (!tema) return null;
+
+  const enlace = tema.enlaces.find(e => e.id === enlaceId);
+  if (enlace && nuevoNombre && nuevoNombre.trim() !== "" && nuevaUrl && nuevaUrl.trim() !== "") {
+    enlace.nombre = nuevoNombre.trim();
+    enlace.url = nuevaUrl.trim();
     return enlace;
   }
   return null;
@@ -121,7 +124,7 @@ module.exports = {
   obtenerTemasOrdenados,
   agregarEnlace,
   obtenerEnlace,
-  actualizarEnlace,
+  actualizarEnlace,  // <- mejorada
   eliminarEnlace,
   votarEnlace
 };

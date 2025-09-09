@@ -1,9 +1,12 @@
+// controladores/enlaceControlador.js
+
 const { 
   agregarEnlace, 
   eliminarEnlace, 
-  votarEnlace 
-} = require("../modelos/enlaceModelo");
-const { obtenerTemaPorId } = require("../modelos/temaModelo");
+  votarEnlace, 
+  actualizarEnlace, 
+  obtenerTemaPorId 
+} = require("../modelos/temaModelo");
 
 // Crear enlace
 function crearEnlace(req, res) {
@@ -20,6 +23,40 @@ function crearEnlace(req, res) {
   }
 
   res.redirect(`/temas/editar/${temaId}`);
+}
+
+// Editar enlace (tradicional con redirect)
+function editarEnlace(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const enlaceId = parseInt(req.params.enlaceId);
+  const { nombre, url } = req.body;
+
+  const enlace = actualizarEnlace(temaId, enlaceId, nombre, url);
+  const tema = obtenerTemaPorId(temaId);
+
+  if (!enlace) {
+    return res.render("editarTema", { 
+      tema, 
+      error: "No se pudo actualizar el enlace. Verifica los datos." 
+    });
+  }
+
+  res.redirect(`/temas/editar/${temaId}`);
+}
+
+// Editar enlace con AJAX (respuesta JSON)
+function editarEnlaceAjax(req, res) {
+  const temaId = parseInt(req.params.temaId);
+  const enlaceId = parseInt(req.params.enlaceId);
+  const { nombre, url } = req.body;
+
+  const enlace = actualizarEnlace(temaId, enlaceId, nombre, url);
+
+  if (!enlace) {
+    return res.json({ success: false, message: "No se pudo actualizar el enlace." });
+  }
+
+  res.json({ success: true, enlace });
 }
 
 // Eliminar enlace
@@ -42,4 +79,10 @@ function votarEnlaceJson(req, res) {
   res.json({ success: false });
 }
 
-module.exports = { crearEnlace, borrarEnlace, votarEnlaceJson };
+module.exports = { 
+  crearEnlace, 
+  editarEnlace,       // edición con redirect
+  editarEnlaceAjax,   // edición inline con AJAX
+  borrarEnlace, 
+  votarEnlaceJson 
+};

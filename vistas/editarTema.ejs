@@ -28,15 +28,28 @@
     <button type="submit">Agregar Enlace</button>
   </form>
 
-  <!-- Lista de enlaces existentes -->
+  <!-- Lista de enlaces existentes con edición inline -->
   <ul id="lista-enlaces">
     <% tema.enlaces.forEach(e => { %>
       <li id="enlace-<%= e.id %>" class="enlace-item">
-        <a href="<%= e.url %>" target="_blank"><%= e.nombre %></a> — 
+        <!-- Edición inline vía AJAX -->
+        <div class="form-editar-enlace">
+          <input type="text" class="nombre-enlace" value="<%= e.nombre %>" required>
+          <input type="url" class="url-enlace" value="<%= e.url %>" required>
+          <button 
+            type="button"
+            class="btn-guardar-enlace"
+            data-id="<%= e.id %>"
+            data-tema="<%= tema.id %>">
+            Guardar
+          </button>
+        </div>
+
+        <!-- Contador de votos -->
         <span class="contador-votos"><%= e.votos %></span> votos
 
         <!-- Botón para eliminar enlace -->
-        <form action="/temas/editar/<%= tema.id %>/enlaces/<%= e.id %>/eliminar" method="POST" style="display:inline;">
+        <form action="/temas/editar/<%= tema.id %>/enlaces/eliminar/<%= e.id %>" method="POST" style="display:inline;">
           <button>Eliminar</button>
         </form>
 
@@ -53,7 +66,8 @@
 
   <p><a href="/temas">Volver a la lista</a></p>
 
-  <!-- Script para votación AJAX en enlaces -->
+  <!-- Scripts para interacción AJAX -->
   <script src="/js/votacionEnlaces.js"></script>
+  <script src="/js/editarEnlaces.js"></script>
 </body>
 </html>
