@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const path = require("path");
 
@@ -12,12 +11,13 @@ app.use(express.static(path.join(__dirname, "publico")));
 // Middleware para leer datos de formularios
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.render("index", { mensaje: "Hola Mundo desde Express y EJS 🚀" });
-});
+// Middleware para parsear JSON (para AJAX)
+app.use(express.json());
 
+// Rutas
 const temaRutas = require("./rutas/temaRutas");
 app.use("/temas", temaRutas);
+app.use("/temas/editar/:temaId/enlaces", require("./rutas/enlaceRutas"));
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

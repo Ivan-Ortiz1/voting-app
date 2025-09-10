@@ -19,24 +19,32 @@
     <button type="submit">Agregar</button>
   </form>
 
-  <!-- Lista de temas -->
+  <!-- Lista de temas con edición inline, votación AJAX y enlace a edición completa -->
   <ul id="lista-temas">
     <% temas.forEach(t => { %>
-      <li id="tema-<%= t.id %>">
-        <strong><%= t.titulo %></strong> — 
+      <li id="tema-<%= t.id %>" class="tema-item">
+        <input type="text" class="titulo-tema" value="<%= t.titulo %>">
+        <button class="btn-guardar-tema" data-id="<%= t.id %>">Guardar</button>
+
         <span class="contador-votos"><%= t.votos %></span> votos
-        <a href="/temas/editar/<%= t.id %>">Editar</a>
+        <button class="btn-votar-tema" data-id="<%= t.id %>">Votar</button>
+
+        <!-- Botón de eliminar -->
         <form action="/temas/eliminar/<%= t.id %>" method="POST" style="display:inline;">
           <button type="submit">Eliminar</button>
         </form>
-        <button class="btn-votar" data-id="<%= t.id %>">Votar</button>
+
+        <!-- Nuevo botón para ir a la vista de edición completa -->
+        <a href="/temas/editar/<%= t.id %>" class="btn-editar">Editar</a>
       </li>
     <% }) %>
   </ul>
 
   <p><a href="/">Volver al inicio</a></p>
 
-  <!-- Script para votación en tiempo real -->
-  <script src="/js/votacion.js"></script>
+  <!-- Scripts para interactividad en tiempo real -->
+  <script src="/js/utilidades.js"></script>
+  <script src="/js/editarTemasAjax.js"></script>
+  <script src="/js/votacionTemas.js"></script>
 </body>
 </html>
