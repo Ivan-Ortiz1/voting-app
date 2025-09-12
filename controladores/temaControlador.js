@@ -13,11 +13,17 @@ const {
   obtenerEnlace
 } = require("../modelos/temaModelo");
 
-// --------------------
+const db = require("../db");
+
 // Controladores de Temas
-// --------------------
 function listarTemas(req, res) {
   const temas = obtenerTemasOrdenados();
+  // Para cada tema, obtenemos sus enlaces ordenados por votos
+  temas.forEach(tema => {
+    tema.enlaces = db.prepare(
+      "SELECT * FROM enlaces WHERE tema_id = ? ORDER BY votos DESC"
+    ).all(tema.id);
+  });
   res.render("temas", { temas });
 }
 
@@ -39,6 +45,10 @@ function mostrarFormularioEdicion(req, res) {
   if (!tema) {
     return res.redirect("/temas");
   }
+  // Traemos enlaces para la edición
+  tema.enlaces = db.prepare(
+    "SELECT * FROM enlaces WHERE tema_id = ? ORDER BY votos DESC"
+  ).all(tema.id);
   res.render("editarTema", { tema });
 }
 
@@ -54,12 +64,10 @@ function editarTema(req, res) {
   res.redirect("/temas");
 }
 
-// --------------------
-// NUEVA función para edición AJAX de temas
-// --------------------
+// Función para edición AJAX de temas
 function editarTemaAjax(req, res) {
   const id = parseInt(req.params.id);
-  const { titulo } = req.body || {};  // <- aseguramos que no sea undefined
+  const { titulo } = req.body || {};
 
   if (!titulo) {
     return res.json({ success: false, message: "El título es obligatorio." });
@@ -74,27 +82,21 @@ function editarTemaAjax(req, res) {
   res.json({ success: true, tema });
 }
 
-// --------------------
 // Borrar Tema
-// --------------------
 function borrarTema(req, res) {
   const id = parseInt(req.params.id);
   eliminarTema(id);
   res.redirect("/temas");
 }
 
-// --------------------
 // Votación de Temas
-// --------------------
 function votar(req, res) {
   const id = parseInt(req.params.id);
   votarTema(id);
   res.redirect("/temas");
 }
 
-// --------------------
 // Votación AJAX de Temas
-// --------------------
 function votarAjax(req, res) {
   const id = parseInt(req.params.id);
   const tema = votarTema(id);
@@ -131,9 +133,7 @@ function borrarEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// --------------------
 // Votación AJAX de Enlaces
-// --------------------
 function votarEnlaceAjax(req, res) {
   const temaId = parseInt(req.params.temaId);
   const enlaceId = parseInt(req.params.enlaceId);

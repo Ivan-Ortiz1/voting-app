@@ -43,5 +43,5 @@ function reordenarLista() {
     return votosB - votosA;
   });
 
-  items.forEach(item => lista.appendChild(item)); // reinsertar en orden
+  items.forEach(item => lista.appendChild(item));
 }

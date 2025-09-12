@@ -1,117 +1,94 @@
 // modelos/temaModelo.js
+const db = require("../db"); // usamos la misma instancia de db.js
 
-let temas = [
-  { id: 1, titulo: "JavaScript", votos: 3, enlaces: [] },
-  { id: 2, titulo: "Node.js y Express", votos: 5, enlaces: [] },
-  { id: 3, titulo: "Bases de Datos", votos: 2, enlaces: [] }
-];
-
+// --------------------
+// Temas
+// --------------------
 function obtenerTemas() {
-  return temas;
+  return db.prepare("SELECT * FROM temas").all();
 }
 
 function agregarTema(titulo) {
   if (!titulo || titulo.trim() === "") return null;
 
-  const nuevoTema = {
-    id: temas.length > 0 ? temas[temas.length - 1].id + 1 : 1,
-    titulo: titulo.trim(),
-    votos: 0,
-    enlaces: [] // cada tema empieza con su lista de enlaces vacía
-  };
-  temas.push(nuevoTema);
-  return nuevoTema;
+  const stmt = db.prepare("INSERT INTO temas (titulo, votos) VALUES (?, 0)");
+  const info = stmt.run(titulo.trim());
+
+  return { id: info.lastInsertRowid, titulo: titulo.trim(), votos: 0, enlaces: [] };
 }
 
 function obtenerTemaPorId(id) {
-  return temas.find(t => t.id === id);
+  return db.prepare("SELECT * FROM temas WHERE id = ?").get(id);
 }
 
 function actualizarTema(id, nuevoTitulo) {
-  const tema = obtenerTemaPorId(id);
-  if (tema && nuevoTitulo && nuevoTitulo.trim() !== "") {
-    tema.titulo = nuevoTitulo.trim();
-    return tema;
-  }
-  return null;
+  if (!nuevoTitulo || nuevoTitulo.trim() === "") return null;
+
+  const stmt = db.prepare("UPDATE temas SET titulo = ? WHERE id = ?");
+  const info = stmt.run(nuevoTitulo.trim(), id);
+
+  if (info.changes === 0) return null;
+  return obtenerTemaPorId(id);
 }
 
 function eliminarTema(id) {
-  const indice = temas.findIndex(t => t.id === id);
-  if (indice !== -1) {
-    temas.splice(indice, 1);
-    return true;
-  }
-  return false;
+  // Primero eliminar enlaces asociados
+  db.prepare("DELETE FROM enlaces WHERE tema_id = ?").run(id);
+
+  const stmt = db.prepare("DELETE FROM temas WHERE id = ?");
+  const info = stmt.run(id);
+  return info.changes > 0;
 }
 
 function votarTema(id) {
-  const tema = obtenerTemaPorId(id);
-  if (tema) {
-    tema.votos++;
-    return tema;
-  }
-  return null;
+  const stmt = db.prepare("UPDATE temas SET votos = votos + 1 WHERE id = ?");
+  const info = stmt.run(id);
+  if (info.changes === 0) return null;
+  return obtenerTemaPorId(id);
 }
 
 function obtenerTemasOrdenados() {
-  return [...temas].sort((a, b) => b.votos - a.votos);
+  return db.prepare("SELECT * FROM temas ORDER BY votos DESC").all();
 }
 
-// -------------------------
-// CRUD de Enlaces
-// -------------------------
-
+// --------------------
+// Enlaces
+// --------------------
 function agregarEnlace(temaId, url, nombre) {
-  const tema = obtenerTemaPorId(temaId);
-  if (!tema || !url || !nombre) return null;
+  if (!url || !nombre) return null;
 
-  const nuevoEnlace = {
-    id: tema.enlaces.length > 0 ? tema.enlaces[tema.enlaces.length - 1].id + 1 : 1,
-    nombre: nombre.trim(),
-    url: url.trim(),
-    votos: 0
-  };
-  tema.enlaces.push(nuevoEnlace);
-  return nuevoEnlace;
+  const stmt = db.prepare("INSERT INTO enlaces (tema_id, nombre, url, votos) VALUES (?, ?, ?, 0)");
+  const info = stmt.run(temaId, nombre.trim(), url.trim());
+
+  return { id: info.lastInsertRowid, nombre: nombre.trim(), url: url.trim(), votos: 0 };
 }
 
 function obtenerEnlace(temaId, enlaceId) {
-  const tema = obtenerTemaPorId(temaId);
-  return tema ? tema.enlaces.find(e => e.id === enlaceId) : null;
+  return db.prepare("SELECT * FROM enlaces WHERE id = ? AND tema_id = ?").get(enlaceId, temaId);
 }
 
 function actualizarEnlace(temaId, enlaceId, nuevoNombre, nuevaUrl) {
-  const tema = obtenerTemaPorId(temaId);
-  if (!tema) return null;
+  if (!nuevoNombre || !nuevoNombre.trim() || !nuevaUrl || !nuevaUrl.trim()) return null;
 
-  const enlace = tema.enlaces.find(e => e.id === enlaceId);
-  if (enlace && nuevoNombre && nuevoNombre.trim() !== "" && nuevaUrl && nuevaUrl.trim() !== "") {
-    enlace.nombre = nuevoNombre.trim();
-    enlace.url = nuevaUrl.trim();
-    return enlace;
-  }
-  return null;
+  const stmt = db.prepare("UPDATE enlaces SET nombre = ?, url = ? WHERE id = ? AND tema_id = ?");
+  const info = stmt.run(nuevoNombre.trim(), nuevaUrl.trim(), enlaceId, temaId);
+
+  if (info.changes === 0) return null;
+  return obtenerEnlace(temaId, enlaceId);
 }
 
 function eliminarEnlace(temaId, enlaceId) {
-  const tema = obtenerTemaPorId(temaId);
-  if (!tema) return false;
-  const index = tema.enlaces.findIndex(e => e.id === enlaceId);
-  if (index !== -1) {
-    tema.enlaces.splice(index, 1);
-    return true;
-  }
-  return false;
+  const stmt = db.prepare("DELETE FROM enlaces WHERE id = ? AND tema_id = ?");
+  const info = stmt.run(enlaceId, temaId);
+  return info.changes > 0;
 }
 
 function votarEnlace(temaId, enlaceId) {
-  const enlace = obtenerEnlace(temaId, enlaceId);
-  if (enlace) {
-    enlace.votos++;
-    return enlace;
-  }
-  return null;
+  const stmt = db.prepare("UPDATE enlaces SET votos = votos + 1 WHERE id = ? AND tema_id = ?");
+  const info = stmt.run(enlaceId, temaId);
+
+  if (info.changes === 0) return null;
+  return obtenerEnlace(temaId, enlaceId);
 }
 
 module.exports = { 
@@ -124,7 +101,7 @@ module.exports = {
   obtenerTemasOrdenados,
   agregarEnlace,
   obtenerEnlace,
-  actualizarEnlace,  // <- mejorada
+  actualizarEnlace,
   eliminarEnlace,
   votarEnlace
 };

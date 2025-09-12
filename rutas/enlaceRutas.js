@@ -11,7 +11,7 @@ const {
 // CRUD de enlaces
 router.post("/agregar", crearEnlace);
 router.post("/editar/:enlaceId", editarEnlace);
-router.post("/editar/:enlaceId/json", editarEnlaceAjax); // <- edición inline con AJAX
+router.post("/editar/:enlaceId/json", editarEnlaceAjax);
 router.post("/eliminar/:enlaceId", borrarEnlace);
 router.post("/votar/:enlaceId/json", votarEnlaceJson);
 
