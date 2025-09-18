@@ -1,14 +1,14 @@
-/* Estilos base */
+
 body {
   font-family: Arial, sans-serif;
-  background: #ffffff;
-  color: #333;
+  background: #121212;
+  color: #f0f0f0;
   text-align: center;
   margin-top: 50px;
   line-height: 1.6;
 }
 
-/* Listas */
+
 ul {
   list-style: none;
   padding: 0;
@@ -17,11 +17,11 @@ ul {
 }
 
 li {
-  background: #ffffff;
+  background: #1e1e1e;
   padding: 12px;
   margin: 8px 0;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5); 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,7 +30,7 @@ li {
 /* Botones */
 button,
 input[type="submit"] {
-  background: #007bff;
+  background: #07006b;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -41,7 +41,7 @@ input[type="submit"] {
 
 button:hover,
 input[type="submit"]:hover {
-  background: #0056b3;
+  background: #050045;
 }
 
 /* Inputs */
@@ -49,8 +49,10 @@ input[type="text"],
 input[type="url"] {
   padding: 6px;
   margin: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #555;  
   border-radius: 5px;
+  background: #2a2a2a;      
+  color: #f0f0f0;          
 }
 
 /* Formulario inline para edición de enlaces */
@@ -62,15 +64,20 @@ input[type="url"] {
 
 .form-inline input {
   padding: 2px 4px;
+  background: #2a2a2a;
+  color: #f0f0f0;
+  border: 1px solid #555;
 }
 
 /* Efecto de highlight al votar */
 .highlight {
-  background: #d4edda !important;
+  background: #28a745 !important; /* verde más visible sobre fondo oscuro */
   transition: background 0.5s ease;
+  color: #fff;
 }
 
 /* Mensajes de error */
 p[style*="color:red"] {
   font-weight: bold;
+  color: #ff4c4c;
 }

@@ -1,8 +1,7 @@
-// migracion.js
 const Database = require("better-sqlite3");
 const db = new Database("./voting.db");
 
-// Crear tablas
+// Crear tabla de temas
 db.prepare(`
   CREATE TABLE IF NOT EXISTS temas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,6 +10,7 @@ db.prepare(`
   )
 `).run();
 
+// Crear tabla de enlaces
 db.prepare(`
   CREATE TABLE IF NOT EXISTS enlaces (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,14 +22,4 @@ db.prepare(`
   )
 `).run();
 
-// Insertar datos de prueba
-const temasPrueba = [
-  { titulo: "JavaScript", votos: 3 },
-  { titulo: "Node.js y Express", votos: 5 },
-  { titulo: "Bases de Datos", votos: 2 }
-];
-
-const insertTema = db.prepare("INSERT INTO temas (titulo, votos) VALUES (?, ?)");
-temasPrueba.forEach(t => insertTema.run(t.titulo, t.votos));
-
-console.log("Migración completada: tablas creadas y temas de prueba insertados.");
+console.log("Migración completada: tablas creadas.");

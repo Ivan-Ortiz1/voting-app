@@ -20,5 +20,5 @@ app.use("/temas", temaRutas);
 app.use("/temas/editar/:temaId/enlaces", require("./rutas/enlaceRutas"));
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}/temas`);
 });
