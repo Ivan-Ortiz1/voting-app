@@ -35,16 +35,14 @@
         </form>
 
         <!-- Nuevo botón para ir a la vista de edición completa -->
-        <a href="/temas/editar/<%= t.id %>" class="btn-editar">Editar</a>
+        <a href="/temas/editar/<%= t.id %>" class="btn-editar">Enlaces</a>
       </li>
     <% }) %>
   </ul>
 
-  <p><a href="/">Volver al inicio</a></p>
 
   <!-- Scripts para interactividad en tiempo real -->
-  <script src="/js/utilidades.js"></script>
-  <script src="/js/editarTemasAjax.js"></script>
-  <script src="/js/votacionTemas.js"></script>
+  <script type="module" src="/js/utilidades.js"></script>
+  <script type="module" src="/js/temas.js"></script>
 </body>
 </html>

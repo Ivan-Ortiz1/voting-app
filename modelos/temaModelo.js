@@ -51,9 +51,7 @@ function obtenerTemasOrdenados() {
   return db.prepare("SELECT * FROM temas ORDER BY votos DESC").all();
 }
 
-// --------------------
 // Enlaces
-// --------------------
 function agregarEnlace(temaId, url, nombre) {
   if (!url || !nombre) return null;
 

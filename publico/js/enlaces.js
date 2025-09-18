@@ -1,15 +1,18 @@
+import { resaltarElemento, reordenarListaPorVotos } from './utilidades.js';
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Guardar enlace en edición inline
+
+  // Editar enlaces
   document.querySelectorAll(".btn-guardar-enlace").forEach(boton => {
     boton.addEventListener("click", async () => {
-      const temaId = boton.getAttribute("data-tema");
-      const enlaceId = boton.getAttribute("data-id");
+      const temaId = boton.dataset.tema;
+      const enlaceId = boton.dataset.id;
       const li = document.getElementById(`enlace-${enlaceId}`);
       const nombre = li.querySelector(".nombre-enlace").value;
       const url = li.querySelector(".url-enlace").value;
 
       try {
-        const resp = await fetch(`/temas/editar/${temaId}/enlaces/${enlaceId}/editar`, {
+        const resp = await fetch(`/temas/editar/${temaId}/enlaces/editar/${enlaceId}/json`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ nombre, url })
@@ -17,40 +20,41 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await resp.json();
 
         if (data.success) {
-          li.classList.add("highlight");
-          setTimeout(() => li.classList.remove("highlight"), 600);
+          li.querySelector(".nombre-enlace").value = data.enlace.nombre;
+          li.querySelector(".url-enlace").value = data.enlace.url;
+          resaltarElemento(li);
+          reordenarListaPorVotos("lista-enlaces");
         } else {
           alert(data.message);
         }
-      } catch (err) {
-        console.error("Error al editar enlace:", err);
+      } catch (error) {
+        console.error("Error al actualizar enlace:", error);
       }
     });
   });
 
-  // Votar enlace
+  // Votar enlaces
   document.querySelectorAll(".btn-votar-enlace").forEach(boton => {
     boton.addEventListener("click", async () => {
-      const temaId = boton.getAttribute("data-tema");
-      const enlaceId = boton.getAttribute("data-id");
+      const temaId = boton.dataset.tema;
+      const enlaceId = boton.dataset.id;
       const li = document.getElementById(`enlace-${enlaceId}`);
 
       try {
-        const resp = await fetch(`/temas/editar/${temaId}/enlaces/${enlaceId}/votar/json`, {
-          method: "POST"
-        });
+        const resp = await fetch(`/temas/editar/${temaId}/enlaces/${enlaceId}/votar/json`, { method: "POST" });
         const data = await resp.json();
 
         if (data.success) {
           li.querySelector(".contador-votos").textContent = data.enlace.votos;
-          li.classList.add("highlight");
-          setTimeout(() => li.classList.remove("highlight"), 600);
+          resaltarElemento(li);
+          reordenarListaPorVotos("lista-enlaces");
         } else {
           alert(data.message);
         }
-      } catch (err) {
-        console.error("Error al votar enlace:", err);
+      } catch (error) {
+        console.error("Error al votar enlace:", error);
       }
     });
   });
+
 });
