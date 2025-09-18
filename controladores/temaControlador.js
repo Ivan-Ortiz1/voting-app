@@ -108,9 +108,7 @@ function votarAjax(req, res) {
   }
 }
 
-// --------------------
 // Controladores de Enlaces
-// --------------------
 function crearEnlace(req, res) {
   const temaId = parseInt(req.params.temaId);
   const { nombre, url } = req.body;

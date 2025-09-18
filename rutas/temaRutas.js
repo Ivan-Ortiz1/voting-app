@@ -16,9 +16,7 @@ const {
   votarEnlaceAjax
 } = require("../controladores/temaControlador");
 
-// --------------------
 // Rutas de Temas
-// --------------------
 
 // Listar y crear
 router.get("/", listarTemas);
@@ -35,12 +33,10 @@ router.post("/editar/:id/json", editarTemaAjax);
 router.post("/eliminar/:id", borrarTema);
 
 // Votación
-router.post("/votar/:id", votar);          // flujo clásico
-router.post("/votar/:id/json", votarAjax); // flujo AJAX en tiempo real
+router.post("/votar/:id", votar);
+router.post("/votar/:id/json", votarAjax);
 
-// --------------------
-// Rutas de Enlaces (anidadas en cada tema)
-// --------------------
+// Rutas de Enlaces
 
 // Crear, editar y eliminar enlaces
 router.post("/editar/:temaId/enlaces/agregar", crearEnlace);

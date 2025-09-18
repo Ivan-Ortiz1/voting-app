@@ -81,8 +81,8 @@ function votarEnlaceJson(req, res) {
 
 module.exports = { 
   crearEnlace, 
-  editarEnlace,       // edición con redirect
-  editarEnlaceAjax,   // edición inline con AJAX
+  editarEnlace,
+  editarEnlaceAjax,
   borrarEnlace, 
   votarEnlaceJson 
 };

@@ -2,9 +2,7 @@
 const Database = require("better-sqlite3");
 const db = new Database("./voting.db");
 
-// --------------------
 // Crear tablas
-// --------------------
 db.prepare(`
   CREATE TABLE IF NOT EXISTS temas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,9 +22,7 @@ db.prepare(`
   )
 `).run();
 
-// --------------------
 // Insertar datos de prueba
-// --------------------
 const temasPrueba = [
   { titulo: "JavaScript", votos: 3 },
   { titulo: "Node.js y Express", votos: 5 },
