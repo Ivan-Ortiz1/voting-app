@@ -25,7 +25,7 @@ function crearEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Editar enlace (tradicional con redirect)
+// Editar enlace
 function editarEnlace(req, res) {
   const temaId = parseInt(req.params.temaId);
   const enlaceId = parseInt(req.params.enlaceId);
@@ -44,7 +44,7 @@ function editarEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Editar enlace con AJAX (respuesta JSON)
+// Editar enlace con AJAX
 function editarEnlaceAjax(req, res) {
   const temaId = parseInt(req.params.temaId);
   const enlaceId = parseInt(req.params.enlaceId);
@@ -67,7 +67,7 @@ function borrarEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Votar enlace (JSON para frontend)
+// Votar enlace 
 function votarEnlaceJson(req, res) {
   const temaId = parseInt(req.params.temaId);
   const enlaceId = parseInt(req.params.enlaceId);

@@ -1,9 +1,7 @@
 // modelos/temaModelo.js
 const db = require("../db"); // usamos la misma instancia de db.js
 
-// --------------------
 // Temas
-// --------------------
 function obtenerTemas() {
   return db.prepare("SELECT * FROM temas").all();
 }
