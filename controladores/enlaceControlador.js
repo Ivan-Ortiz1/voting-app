@@ -16,7 +16,7 @@ function respuestaAjax(res, data, errorMessage = "") {
   res.json({ success: true, ...data });
 }
 
-// ---------------- Controladores de Enlaces ----------------
+// Controladores de Enlaces
 
 // Crear un nuevo enlace en un tema
 function crearEnlace(req, res) {
@@ -69,6 +69,7 @@ function editarEnlaceAjax(req, res) {
 
 // Eliminar un enlace
 function borrarEnlace(req, res) {
+  console.log("BORRAR ENLACE", req.params);
   const temaId = toInt(req.params.temaId);
   const enlaceId = toInt(req.params.enlaceId);
 
@@ -78,6 +79,7 @@ function borrarEnlace(req, res) {
 
 // Votar un enlace (AJAX)
 function votarEnlaceAjax(req, res) {
+  console.log("VOTAR ENLACE", req.params);
   const temaId = toInt(req.params.temaId);
   const enlaceId = toInt(req.params.enlaceId);
 

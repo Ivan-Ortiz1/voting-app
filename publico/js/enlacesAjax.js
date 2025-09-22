@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const li = document.getElementById(`enlace-${enlaceId}`);
 
       try {
-        const resp = await fetch(`/temas/editar/${temaId}/enlaces/${enlaceId}/votar/json`, { method: "POST" });
+        const resp = await fetch(`/temas/editar/${temaId}/enlaces/votar/${enlaceId}/json`, { method: "POST" });
         const data = await resp.json();
 
         if (data.success) {
