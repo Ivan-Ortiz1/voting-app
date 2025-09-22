@@ -1,49 +1,36 @@
 // rutas/temaRutas.js
 const express = require("express");
 const router = express.Router();
-const { 
-  listarTemas, 
-  crearTema, 
-  mostrarFormularioEdicion, 
-  editarTema, 
-  borrarTema, 
-  votar, 
-  votarAjax,
-  editarTemaAjax,
-  crearEnlace,
-  editarEnlace,
-  borrarEnlace,
-  votarEnlaceAjax
-} = require("../controladores/temaControlador");
+
+// Controladores
+const temaControlador = require("../controladores/temaControlador");
+const enlaceControlador = require("../controladores/enlaceControlador");
 
 // Rutas de Temas
 
-// Listar y crear
-router.get("/", listarTemas);
-router.post("/agregar", crearTema);
+// Listar todos los temas
+router.get("/", temaControlador.listarTemas);
 
-// Edición
-router.get("/editar/:id", mostrarFormularioEdicion);
-router.post("/editar/:id", editarTema);
+// Crear un nuevo tema
+router.post("/agregar", temaControlador.crearTema);
 
-// NUEVA ruta AJAX para editar temas en tiempo real
-router.post("/editar/:id/json", editarTemaAjax);
+// Mostrar formulario para editar un tema
+router.get("/editar/:id", temaControlador.mostrarFormularioEdicion);
 
-// Eliminación
-router.post("/eliminar/:id", borrarTema);
+// Editar un tema
+router.post("/editar/:id", temaControlador.editarTema);
 
-// Votación
-router.post("/votar/:id", votar);
-router.post("/votar/:id/json", votarAjax);
+// Editar un tema vía AJAX
+router.post("/editar/:id/json", temaControlador.editarTemaAjax);
 
-// Rutas de Enlaces
+// Eliminar un tema
+router.post("/eliminar/:id", temaControlador.borrarTema);
 
-// Crear, editar y eliminar enlaces
-router.post("/editar/:temaId/enlaces/agregar", crearEnlace);
-router.post("/editar/:temaId/enlaces/:enlaceId/editar", editarEnlace);
-router.post("/editar/:temaId/enlaces/:enlaceId/eliminar", borrarEnlace);
+// Votar un tema
+router.post("/votar/:id", temaControlador.votar);
 
-// Votación AJAX para enlaces
-router.post("/editar/:temaId/enlaces/:enlaceId/votar/json", votarEnlaceAjax);
+// Votar un tema vía AJAX
+router.post("/votar/:id/json", temaControlador.votarAjax);
+
 
 module.exports = router;

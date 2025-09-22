@@ -22,4 +22,4 @@ db.prepare(`
   )
 `).run();
 
-console.log("Migración completada: tablas creadas.");
+console.log("Tablas creadas.");

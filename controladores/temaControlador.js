@@ -5,143 +5,106 @@ const {
   actualizarTema, 
   eliminarTema, 
   votarTema, 
-  obtenerTemasOrdenados,
-  agregarEnlace,
-  actualizarEnlace,
-  eliminarEnlace,
-  votarEnlace,
-  obtenerEnlace
+  obtenerTemasOrdenados
 } = require("../modelos/temaModelo");
 
 const db = require("../db");
 
-// Controladores de Temas
+// Helpers locales
+const toInt = (val) => parseInt(val, 10);
+
+function obtenerEnlacesPorTema(temaId) {
+  return db.prepare(
+    "SELECT * FROM enlaces WHERE tema_id = ? ORDER BY votos DESC"
+  ).all(temaId);
+}
+
+function respuestaJson(res, success, data = {}, message = "") {
+  res.json({ success, ...(data && { ...data }), ...(message && { message }) });
+}
+
+// ---------------- Controladores de Temas ----------------
+
+// Listar todos los temas con sus enlaces
 function listarTemas(req, res) {
   const temas = obtenerTemasOrdenados();
-  // Para cada tema, obtenemos sus enlaces ordenados por votos
-  temas.forEach(tema => {
-    tema.enlaces = db.prepare(
-      "SELECT * FROM enlaces WHERE tema_id = ? ORDER BY votos DESC"
-    ).all(tema.id);
+  temas.forEach((tema) => {
+    tema.enlaces = obtenerEnlacesPorTema(tema.id);
   });
   res.render("temas", { temas });
 }
 
+// Crear un nuevo tema
 function crearTema(req, res) {
   const { titulo } = req.body;
   const tema = agregarTema(titulo);
+
   if (!tema) {
     return res.render("temas", { 
       temas: obtenerTemasOrdenados(), 
       error: "No se puede crear un tema vacío." 
     });
   }
+
   res.redirect("/temas");
 }
 
+// Mostrar formulario para editar un tema
 function mostrarFormularioEdicion(req, res) {
-  const id = parseInt(req.params.id);
+  const id = toInt(req.params.id);
   const tema = obtenerTemaPorId(id);
-  if (!tema) {
-    return res.redirect("/temas");
-  }
-  // Traemos enlaces para la edición
-  tema.enlaces = db.prepare(
-    "SELECT * FROM enlaces WHERE tema_id = ? ORDER BY votos DESC"
-  ).all(tema.id);
+
+  if (!tema) return res.redirect("/temas");
+
+  tema.enlaces = obtenerEnlacesPorTema(tema.id);
   res.render("editarTema", { tema });
 }
 
+// Editar un tema
 function editarTema(req, res) {
-  const id = parseInt(req.params.id);
+  const id = toInt(req.params.id);
   const tema = actualizarTema(id, req.body.titulo);
+
   if (!tema) {
     return res.render("temas", { 
       temas: obtenerTemasOrdenados(),
       error: "Edición inválida."
     });
   }
+
   res.redirect("/temas");
 }
 
-// Función para edición AJAX de temas
+// Editar un tema (AJAX)
 function editarTemaAjax(req, res) {
-  const id = parseInt(req.params.id);
+  const id = toInt(req.params.id);
   const { titulo } = req.body || {};
 
-  if (!titulo) {
-    return res.json({ success: false, message: "El título es obligatorio." });
-  }
+  if (!titulo) return respuestaJson(res, false, {}, "El título es obligatorio.");
 
   const tema = actualizarTema(id, titulo);
+  if (!tema) return respuestaJson(res, false, {}, "No se pudo actualizar el tema.");
 
-  if (!tema) {
-    return res.json({ success: false, message: "No se pudo actualizar el tema. Verifica el título." });
-  }
-
-  res.json({ success: true, tema });
+  respuestaJson(res, true, { tema });
 }
 
-// Borrar Tema
+// Eliminar un tema
 function borrarTema(req, res) {
-  const id = parseInt(req.params.id);
-  eliminarTema(id);
+  eliminarTema(toInt(req.params.id));
   res.redirect("/temas");
 }
 
-// Votación de Temas
+// Votar un tema
 function votar(req, res) {
-  const id = parseInt(req.params.id);
-  votarTema(id);
+  votarTema(toInt(req.params.id));
   res.redirect("/temas");
 }
 
-// Votación AJAX de Temas
+// Votar un tema (AJAX)
 function votarAjax(req, res) {
-  const id = parseInt(req.params.id);
-  const tema = votarTema(id);
-
-  if (tema) {
-    res.json({ success: true, tema });
-  } else {
-    res.json({ success: false, message: "Tema no encontrado" });
-  }
-}
-
-// Controladores de Enlaces
-function crearEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const { nombre, url } = req.body;
-  agregarEnlace(temaId, url, nombre);
-  res.redirect(`/temas/editar/${temaId}`);
-}
-
-function editarEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
-  const { nombre, url } = req.body;
-  actualizarEnlace(temaId, enlaceId, nombre, url);
-  res.redirect(`/temas/editar/${temaId}`);
-}
-
-function borrarEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
-  eliminarEnlace(temaId, enlaceId);
-  res.redirect(`/temas/editar/${temaId}`);
-}
-
-// Votación AJAX de Enlaces
-function votarEnlaceAjax(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
-  const enlace = votarEnlace(temaId, enlaceId);
-
-  if (enlace) {
-    res.json({ success: true, enlace });
-  } else {
-    res.json({ success: false, message: "Enlace no encontrado" });
-  }
+  const tema = votarTema(toInt(req.params.id));
+  if (!tema) return respuestaJson(res, false, {}, "Tema no encontrado.");
+  respuestaJson(res, true, { tema });
 }
 
 module.exports = { 
@@ -149,12 +112,8 @@ module.exports = {
   crearTema, 
   mostrarFormularioEdicion, 
   editarTema, 
+  editarTemaAjax,
   borrarTema, 
   votar, 
-  votarAjax,
-  editarTemaAjax,
-  crearEnlace,
-  editarEnlace,
-  borrarEnlace,
-  votarEnlaceAjax
+  votarAjax
 };

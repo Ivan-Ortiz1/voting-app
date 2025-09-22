@@ -1,5 +1,3 @@
-// controladores/enlaceControlador.js
-
 const { 
   agregarEnlace, 
   eliminarEnlace, 
@@ -8,10 +6,23 @@ const {
   obtenerTemaPorId 
 } = require("../modelos/temaModelo");
 
-// Crear enlace
+// Helpers locales
+const toInt = (val) => parseInt(val, 10);
+
+function respuestaAjax(res, data, errorMessage = "") {
+  if (!data || Object.values(data).some((v) => !v)) {
+    return res.json({ success: false, message: errorMessage });
+  }
+  res.json({ success: true, ...data });
+}
+
+// ---------------- Controladores de Enlaces ----------------
+
+// Crear un nuevo enlace en un tema
 function crearEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
+  const temaId = toInt(req.params.temaId);
   const { nombre, url } = req.body;
+
   const enlace = agregarEnlace(temaId, url, nombre);
   const tema = obtenerTemaPorId(temaId);
 
@@ -25,10 +36,10 @@ function crearEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Editar enlace
+// Editar un enlace existente
 function editarEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
+  const temaId = toInt(req.params.temaId);
+  const enlaceId = toInt(req.params.enlaceId);
   const { nombre, url } = req.body;
 
   const enlace = actualizarEnlace(temaId, enlaceId, nombre, url);
@@ -44,39 +55,36 @@ function editarEnlace(req, res) {
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Editar enlace con AJAX
+// Editar un enlace (AJAX)
 function editarEnlaceAjax(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
+  const temaId = toInt(req.params.temaId);
+  const enlaceId = toInt(req.params.enlaceId);
   const { nombre, url } = req.body;
 
   const enlace = actualizarEnlace(temaId, enlaceId, nombre, url);
-
-  if (!enlace) {
-    return res.json({ success: false, message: "No se pudo actualizar el enlace." });
-  }
-
-  res.json({ success: true, enlace });
+  if (!enlace) return respuestaAjax(res, null, "No se pudo actualizar el enlace.");
+  
+  respuestaAjax(res, { enlace });
 }
 
-// Eliminar enlace
+// Eliminar un enlace
 function borrarEnlace(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
+  const temaId = toInt(req.params.temaId);
+  const enlaceId = toInt(req.params.enlaceId);
+
   eliminarEnlace(temaId, enlaceId);
   res.redirect(`/temas/editar/${temaId}`);
 }
 
-// Votar enlace 
-function votarEnlaceJson(req, res) {
-  const temaId = parseInt(req.params.temaId);
-  const enlaceId = parseInt(req.params.enlaceId);
-  const enlace = votarEnlace(temaId, enlaceId);
+// Votar un enlace (AJAX)
+function votarEnlaceAjax(req, res) {
+  const temaId = toInt(req.params.temaId);
+  const enlaceId = toInt(req.params.enlaceId);
 
-  if (enlace) {
-    return res.json({ success: true, enlace });
-  }
-  res.json({ success: false });
+  const enlace = votarEnlace(temaId, enlaceId);
+  if (!enlace) return respuestaAjax(res, null, "Enlace no encontrado.");
+  
+  respuestaAjax(res, { enlace });
 }
 
 module.exports = { 
@@ -84,5 +92,5 @@ module.exports = {
   editarEnlace,
   editarEnlaceAjax,
   borrarEnlace, 
-  votarEnlaceJson 
+  votarEnlaceAjax 
 };
